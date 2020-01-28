@@ -40,3 +40,20 @@ def flush_files(folder):
                 shutil.rmtree(file_path)
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+def save_list(l):
+    with open('face_data.txt', 'w') as filehandle:
+        for item in l:
+            filehandle.write('%s\n' % item)
+
+def load_list():
+    l = []
+    with open('face_data.txt', 'r') as filehandle:
+        for line in filehandle:
+            # remove linebreak which is the last character of the string
+            currentPlace = line[:-1]
+
+            # add item to the list
+            l.append(currentPlace)
+    return l
+    
