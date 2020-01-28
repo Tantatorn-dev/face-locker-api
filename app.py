@@ -33,7 +33,7 @@ def create_face_landmarks():
         return send_file(os.path.join(os.path.abspath('out'), 'out.png'), mimetype='image/jpg')
 
 
-@app.route('/face',methods=['POST'])
+@app.route('/face',methods=['POST','DELETE','GET'])
 def register_a_face():
     if request.method == 'POST':
 
@@ -53,3 +53,11 @@ def register_a_face():
         util.save_list(encoded_image_list)
         
         return "registered"
+
+    if request.method == 'GET':
+        encoded_image_list = util.load_list()
+        return {'faces':encoded_image_list}
+
+    if request.method == 'DELETE':
+        util.save_list([])
+        
