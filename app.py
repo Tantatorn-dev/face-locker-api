@@ -4,6 +4,7 @@ import face_recognition
 import json
 import util
 
+util.save_list({"faces": []})
 app = Flask(__name__)
 
 temp_filepath = os.path.abspath('temp')
@@ -33,7 +34,7 @@ def create_face_landmarks():
         return send_file(os.path.join(os.path.abspath('out'), 'out.png'), mimetype='image/jpg')
 
 
-@app.route('/face',methods=['POST','DELETE','GET'])
+@app.route('/face', methods=['POST', 'DELETE', 'GET'])
 def register_a_face():
     if request.method == 'POST':
 
@@ -48,16 +49,17 @@ def register_a_face():
 
         encoded_image = face_recognition.face_encodings(image)[0]
 
-        encoded_image_list = util.load_list()
-        encoded_image_list.append({'name':name,'encoded_image':encoded_image})
-        util.save_list(encoded_image_list)
-        
+        encoded_image_list = (util.load_list())["faces"]
+        encoded_image_list.append(
+            {'name': name, 'encoded_image': encoded_image.tolist()})
+        util.save_list({"faces": encoded_image_list})
+
         return "registered"
 
     if request.method == 'GET':
-        encoded_image_list = util.load_list()
-        return {'faces':encoded_image_list}
+        encoded_image_json = util.load_list()
+        return encoded_image_json
 
     if request.method == 'DELETE':
-        util.save_list([])
-        
+        util.save_list({'faces':[]})
+        return 'deleted'

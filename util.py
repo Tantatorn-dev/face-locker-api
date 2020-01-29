@@ -1,7 +1,10 @@
 from PIL import Image, ImageDraw
-import os,shutil
+import os
+import shutil
+import json
 
 out_filepath = os.path.abspath('out')
+
 
 def draw_landmarks(image, landmarks_list):
     pil_image = Image.fromarray(image)
@@ -25,9 +28,12 @@ def draw_landmarks(image, landmarks_list):
         d.polygon(landmark['right_eye'], fill=(255, 255, 255, 30))
 
         # Apply some eyeliner
-        d.line(landmark['left_eye'] + [landmark['left_eye'][0]], fill=(0, 0, 0, 110), width=6)
-        d.line(landmark['right_eye'] + [landmark['right_eye'][0]], fill=(0, 0, 0, 110), width=6)
-    pil_image.save(os.path.join(os.path.join(out_filepath),"out.png"))
+        d.line(landmark['left_eye'] + [landmark['left_eye'][0]],
+               fill=(0, 0, 0, 110), width=6)
+        d.line(landmark['right_eye'] + [landmark['right_eye']
+                                        [0]], fill=(0, 0, 0, 110), width=6)
+    pil_image.save(os.path.join(os.path.join(out_filepath), "out.png"))
+
 
 def flush_files(folder):
     folder = os.path.abspath(folder)
@@ -41,19 +47,13 @@ def flush_files(folder):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-def save_list(l):
-    with open('face_data.txt', 'w') as filehandle:
-        for item in l:
-            filehandle.write('%s\n' % item)
+
+def save_list(data):
+    with open('data.json', 'w') as f:
+        json.dump(data, f)
+
 
 def load_list():
-    l = []
-    with open('face_data.txt', 'r') as filehandle:
-        for line in filehandle:
-            # remove linebreak which is the last character of the string
-            currentPlace = line[:-1]
-
-            # add item to the list
-            l.append(currentPlace)
-    return l
-    
+    with open('data.json', 'r') as f:
+        data= json.load(f)
+    return data
