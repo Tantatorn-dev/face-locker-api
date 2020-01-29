@@ -2,9 +2,9 @@ from PIL import Image, ImageDraw
 import os
 import shutil
 import json
+import face_recognition
 
 out_filepath = os.path.abspath('out')
-
 
 def draw_landmarks(image, landmarks_list):
     pil_image = Image.fromarray(image)
@@ -34,7 +34,6 @@ def draw_landmarks(image, landmarks_list):
                                         [0]], fill=(0, 0, 0, 110), width=6)
     pil_image.save(os.path.join(os.path.join(out_filepath), "out.png"))
 
-
 def flush_files(folder):
     folder = os.path.abspath(folder)
     for filename in os.listdir(folder):
@@ -57,3 +56,12 @@ def load_list():
     with open('data.json', 'r') as f:
         data= json.load(f)
     return data
+
+def check_who(face_list,unknown_face):
+    print(face_list)
+    print(unknown_face)
+    for item in face_list:
+        print(face_recognition.compare_faces([item['encoded_image']],unknown_face))
+        if face_recognition.compare_faces([item['encoded_image']],unknown_face)[0]:
+            return item['name']
+    return 'unknown'

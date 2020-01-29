@@ -4,7 +4,6 @@ import face_recognition
 import json
 import util
 
-util.save_list({"faces": []})
 app = Flask(__name__)
 
 temp_filepath = os.path.abspath('temp')
@@ -54,6 +53,8 @@ def register_a_face():
             {'name': name, 'encoded_image': encoded_image.tolist()})
         util.save_list({"faces": encoded_image_list})
 
+        util.flush_files('temp')
+
         return "registered"
 
     if request.method == 'GET':
@@ -61,5 +62,30 @@ def register_a_face():
         return encoded_image_json
 
     if request.method == 'DELETE':
-        util.save_list({'faces':[]})
+        util.save_list({'faces': []})
         return 'deleted'
+
+
+@app.route('/open', methods=['POST'])
+def open_a_locker():
+    if request.method == 'POST':
+
+        f = request.files['image']
+        f.save(os.path.join(temp_filepath, f.filename))
+        img_list = os.listdir(temp_filepath)
+
+        image = face_recognition.load_image_file(
+            os.path.join(temp_filepath, img_list[0]))
+
+        if len(face_recognition.face_encodings(image))>0:
+            encoded_image = face_recognition.face_encodings(image)[0]
+        else:
+            return 'nobody'
+
+        encoded_image_list = (util.load_list())["faces"]
+
+        who = util.check_who(encoded_image_list,encoded_image)
+
+        util.flush_files('temp')
+
+        return who
