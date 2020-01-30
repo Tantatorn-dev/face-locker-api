@@ -13,6 +13,12 @@ temp_filepath = os.path.abspath('temp')
 def index():
     return 'Welcome to FaceLockerAPI'
 
+@app.route('/number',methods=['GET'])
+def test():
+    if request.method == 'GET':
+        n = request.args.get("n")
+        return n
+
 # create a face landmark
 @app.route('/landmark', methods=['POST'])
 def create_face_landmarks():
